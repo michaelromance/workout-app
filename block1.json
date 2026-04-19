@@ -1,0 +1,1696 @@
+{
+  "blockId": "block-1",
+  "name": "Block 1",
+  "goal": "Hypertrophy + Recomp",
+  "split": "4-day Upper/Lower/Upper/Lower",
+  "startDate": "2026-04-19",
+  "weeks": 6,
+  "phases": [
+    {
+      "week": 1,
+      "label": "Phase 0 \u2014 Onboarding",
+      "rpeTarget": 6,
+      "theme": "Win Level 1. Every set clean."
+    },
+    {
+      "week": 2,
+      "label": "Phase 0 \u2014 Onboarding",
+      "rpeTarget": 6,
+      "theme": "Calibration. 3-4 reps in reserve."
+    },
+    {
+      "week": 3,
+      "label": "Phase 1 \u2014 Progression",
+      "rpeTarget": 7.5,
+      "theme": "First high scores. Weight climbs."
+    },
+    {
+      "week": 4,
+      "label": "Phase 1 \u2014 Progression",
+      "rpeTarget": 8,
+      "theme": "Push reps. Full sets."
+    },
+    {
+      "week": 5,
+      "label": "Phase 2 \u2014 Push",
+      "rpeTarget": 8.5,
+      "theme": "Heavier weight, lower reps."
+    },
+    {
+      "week": 6,
+      "label": "Phase 2 \u2014 Deload",
+      "rpeTarget": 6.5,
+      "theme": "Freshen up for Block 2."
+    }
+  ],
+  "days": [
+    {
+      "dayId": "d1",
+      "dayIndex": 0,
+      "label": "Sunday Upper A",
+      "scheduledWeekday": 0,
+      "dateByWeek": [
+        "2026-04-19",
+        "2026-04-26",
+        "2026-05-03",
+        "2026-05-10",
+        "2026-05-17",
+        "2026-05-24"
+      ],
+      "exercises": [
+        {
+          "name": "Warm-up: band pull-aparts, shoulder dislocates, cat-cow",
+          "cue": "Shoulder + t-spine prep",
+          "type": "mobility",
+          "unit": "min",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            }
+          ]
+        },
+        {
+          "name": "Smith Bench Press",
+          "cue": "Control eccentric 2-0-X. Feet planted. 1-2 reps in reserve early.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 8,
+              "weight": 95
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 8,
+              "weight": 95
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 105
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 8,
+              "weight": 115
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 6,
+              "weight": 125
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 8,
+              "weight": 115
+            }
+          ]
+        },
+        {
+          "name": "Lat Pulldown (wide neutral)",
+          "cue": "Lead with elbows, squeeze lats, pause at bottom.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": 110
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": 110
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 120
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 10,
+              "weight": 130
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 8,
+              "weight": 140
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 130
+            }
+          ]
+        },
+        {
+          "name": "Smith Overhead Press (seated)",
+          "cue": "Grip just outside shoulders. Drive head through at top.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 8,
+              "weight": 65
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 8,
+              "weight": 65
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 8,
+              "weight": 75
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 8,
+              "weight": 80
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 6,
+              "weight": 85
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 8,
+              "weight": 75
+            }
+          ]
+        },
+        {
+          "name": "Seated Cable Row (V-bar)",
+          "cue": "Chest up, pull to lower sternum, squeeze 1 sec.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": 120
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": 120
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 130
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 10,
+              "weight": 140
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 150
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 140
+            }
+          ]
+        },
+        {
+          "name": "DB Bicep Curl",
+          "cue": "Full range. Start below capability; payoff in wk 3-5.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": 20
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": 20
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 25
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 12,
+              "weight": 25
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 30
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 25
+            }
+          ]
+        },
+        {
+          "name": "Cable Rope Tricep Pushdown",
+          "cue": "Elbows pinned. Flare rope at bottom. 1 sec hold.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 12,
+              "weight": 40
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 12,
+              "weight": 40
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 50
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 15,
+              "weight": 50
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 60
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 12,
+              "weight": 50
+            }
+          ]
+        },
+        {
+          "name": "Hanging Knee Raise",
+          "cue": "Controlled \u2014 no swing. 2 sec up, 2 sec down.",
+          "type": "bodyweight",
+          "unit": "reps",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 15,
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 12,
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 12,
+              "weight": null
+            }
+          ]
+        },
+        {
+          "name": "Cool down: foam roll upper + lat stretch",
+          "cue": "5-8 min",
+          "type": "mobility",
+          "unit": "min",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dayId": "d2",
+      "dayIndex": 1,
+      "label": "Monday Lower A",
+      "scheduledWeekday": 1,
+      "dateByWeek": [
+        "2026-04-20",
+        "2026-04-27",
+        "2026-05-04",
+        "2026-05-11",
+        "2026-05-18",
+        "2026-05-25"
+      ],
+      "exercises": [
+        {
+          "name": "Warm-up: hip flexor stretch + ankle reachers + glute bridges",
+          "cue": "Hip opening + glute activation",
+          "type": "mobility",
+          "unit": "min",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 1,
+              "reps": "7 min",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 1,
+              "reps": "7 min",
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 1,
+              "reps": "7 min",
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 1,
+              "reps": "7 min",
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 1,
+              "reps": "7 min",
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 1,
+              "reps": "7 min",
+              "weight": null
+            }
+          ]
+        },
+        {
+          "name": "Smith Squat",
+          "cue": "Wk 1-2 are CALIBRATION \u2014 stop at RPE 6 even if easy. Depth to parallel. Respecting post-pelvis ramp.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 5,
+              "weight": 95
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 5,
+              "weight": 95
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 6,
+              "weight": 115
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 8,
+              "weight": 135
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 6,
+              "weight": 155
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 6,
+              "weight": 135
+            }
+          ]
+        },
+        {
+          "name": "DB Romanian Deadlift",
+          "cue": "Soft knees. Hinge, don't squat. Bar close to legs.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": 45
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": 45
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 50
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 10,
+              "weight": 50
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 50
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 50
+            }
+          ]
+        },
+        {
+          "name": "Bulgarian Split Squat",
+          "cue": "Rear foot elevated. 80% weight on front leg.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 8,
+              "weight": 20
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 8,
+              "weight": 20
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 25
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 10,
+              "weight": 30
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 8,
+              "weight": 35
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 30
+            }
+          ]
+        },
+        {
+          "name": "Leg Extension",
+          "cue": "Slow eccentric. 2-sec pause at top.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 12,
+              "weight": 100
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 12,
+              "weight": 100
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 115
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 12,
+              "weight": 125
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 140
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 12,
+              "weight": 125
+            }
+          ]
+        },
+        {
+          "name": "Seated Leg Curl",
+          "cue": "Controlled. Pause at full contraction.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 12,
+              "weight": 100
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 12,
+              "weight": 100
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 115
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 12,
+              "weight": 125
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 140
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 12,
+              "weight": 125
+            }
+          ]
+        },
+        {
+          "name": "DB Hip Thrust (bench-supported)",
+          "cue": "Shoulders on bench. Drive heels. Squeeze glutes 1 sec.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 12,
+              "weight": 40
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 12,
+              "weight": 40
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 15,
+              "weight": 45
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 12,
+              "weight": 50
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 12,
+              "weight": 50
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 15,
+              "weight": 50
+            }
+          ]
+        },
+        {
+          "name": "Standing Calf Raise (holding DBs)",
+          "cue": "Full range. Pause at top stretch and top contraction.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 15,
+              "weight": 30
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 15,
+              "weight": 30
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 15,
+              "weight": 35
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 15,
+              "weight": 35
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 15,
+              "weight": 40
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 15,
+              "weight": 40
+            }
+          ]
+        },
+        {
+          "name": "Cool down: foam roll quads + hamstring stretch",
+          "cue": "5-8 min",
+          "type": "mobility",
+          "unit": "min",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dayId": "d3",
+      "dayIndex": 2,
+      "label": "Thursday Upper B",
+      "scheduledWeekday": 4,
+      "dateByWeek": [
+        "2026-04-23",
+        "2026-04-30",
+        "2026-05-07",
+        "2026-05-14",
+        "2026-05-21",
+        "2026-05-28"
+      ],
+      "exercises": [
+        {
+          "name": "Warm-up: band pull-aparts + I-Y-T raises",
+          "cue": "Scapular prep",
+          "type": "mobility",
+          "unit": "min",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            }
+          ]
+        },
+        {
+          "name": "DB Incline Bench Press",
+          "cue": "Incline 30-45\u00b0. Controlled press. Different angle vs. Sun flat bench.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 8,
+              "weight": 40
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 8,
+              "weight": 40
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 45
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 8,
+              "weight": 50
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 8,
+              "weight": 50
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 50
+            }
+          ]
+        },
+        {
+          "name": "Pull-ups (neutral or supinated)",
+          "cue": "Wk 1: AMRAP test \u2014 do as many clean as possible, log the count. Add band assist if needed.",
+          "type": "bodyweight",
+          "unit": "reps",
+          "plan": [
+            {
+              "week": 1,
+              "sets": "AMRAP",
+              "reps": "test",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 5,
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 6,
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 6,
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 7,
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 8,
+              "weight": null
+            }
+          ]
+        },
+        {
+          "name": "Chest-Supported DB Row",
+          "cue": "Chest on pad. Pull elbows back, squeeze 1 sec.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": 40
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": 40
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 45
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 10,
+              "weight": 50
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 50
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 12,
+              "weight": 50
+            }
+          ]
+        },
+        {
+          "name": "DB Lateral Raise",
+          "cue": "Slight forward lean. Lead with elbows. 2-sec down.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 12,
+              "weight": 15
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 12,
+              "weight": 15
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 20
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 15,
+              "weight": 20
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 12,
+              "weight": 25
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 12,
+              "weight": 20
+            }
+          ]
+        },
+        {
+          "name": "DB Hammer Curl",
+          "cue": "Neutral grip. Thumbs up. Brachialis work.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": 25
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": 25
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 30
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 12,
+              "weight": 30
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 35
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 30
+            }
+          ]
+        },
+        {
+          "name": "DB Skullcrusher",
+          "cue": "Elbows track forward. Lower to forehead.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": 25
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": 25
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 30
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 12,
+              "weight": 30
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 35
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 30
+            }
+          ]
+        },
+        {
+          "name": "Side Plank (sec per side)",
+          "cue": "Hold for time.",
+          "type": "bodyweight",
+          "unit": "reps",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 30,
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 35,
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 40,
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 45,
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 45,
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 45,
+              "weight": null
+            }
+          ]
+        },
+        {
+          "name": "Cool down: upper body stretch",
+          "cue": "5-8 min",
+          "type": "mobility",
+          "unit": "min",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dayId": "d4",
+      "dayIndex": 3,
+      "label": "Saturday Lower B",
+      "scheduledWeekday": 6,
+      "dateByWeek": [
+        "2026-04-25",
+        "2026-05-02",
+        "2026-05-09",
+        "2026-05-16",
+        "2026-05-23",
+        "2026-05-30"
+      ],
+      "exercises": [
+        {
+          "name": "Warm-up: hip 90/90 + ankle reachers",
+          "cue": "Hip mobility",
+          "type": "mobility",
+          "unit": "min",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 1,
+              "reps": "5 min",
+              "weight": null
+            }
+          ]
+        },
+        {
+          "name": "Smith Romanian Deadlift",
+          "cue": "Heavier hinge than Mon DB RDL. Bar close to legs.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 8,
+              "weight": 95
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 8,
+              "weight": 95
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 115
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 8,
+              "weight": 135
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 8,
+              "weight": 155
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 8,
+              "weight": 135
+            }
+          ]
+        },
+        {
+          "name": "Goblet Squat",
+          "cue": "Hold single DB at chest. Upright torso. Depth to comfort.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 10,
+              "weight": 30
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 10,
+              "weight": 30
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 40
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 12,
+              "weight": 45
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 50
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 50
+            }
+          ]
+        },
+        {
+          "name": "DB Reverse Lunge (static)",
+          "cue": "Step back, drop rear knee. Non-alternating for stability.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 8,
+              "weight": 25
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 8,
+              "weight": 25
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 10,
+              "weight": 30
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 10,
+              "weight": 35
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 40
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 10,
+              "weight": 35
+            }
+          ]
+        },
+        {
+          "name": "Leg Curl",
+          "cue": "Second hamstring hit of week. Pause at contraction.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 12,
+              "weight": 100
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 12,
+              "weight": 100
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 115
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 12,
+              "weight": 125
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 10,
+              "weight": 140
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 12,
+              "weight": 125
+            }
+          ]
+        },
+        {
+          "name": "Cable Hip Abduction",
+          "cue": "Standing, single leg. Replaces 2023 hip adductor machine.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 12,
+              "weight": 20
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 12,
+              "weight": 20
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 12,
+              "weight": 25
+            },
+            {
+              "week": 4,
+              "sets": 3,
+              "reps": 15,
+              "weight": 25
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 12,
+              "weight": 30
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 12,
+              "weight": 25
+            }
+          ]
+        },
+        {
+          "name": "Smith Calf Raise",
+          "cue": "Full stretch. Pause at top. Higher volume than Monday.",
+          "type": "weighted",
+          "unit": "lb",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 15,
+              "weight": 95
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 15,
+              "weight": 95
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 15,
+              "weight": 115
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 15,
+              "weight": 115
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 15,
+              "weight": 135
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 15,
+              "weight": 135
+            }
+          ]
+        },
+        {
+          "name": "V-ups",
+          "cue": "Arms and legs meet at top. Controlled.",
+          "type": "bodyweight",
+          "unit": "reps",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 2,
+              "reps": 12,
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 3,
+              "reps": 12,
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 3,
+              "reps": 15,
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 4,
+              "reps": 12,
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 4,
+              "reps": 15,
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 3,
+              "reps": 15,
+              "weight": null
+            }
+          ]
+        },
+        {
+          "name": "Cool down: lower body stretch + foam roll",
+          "cue": "10 min",
+          "type": "mobility",
+          "unit": "min",
+          "plan": [
+            {
+              "week": 1,
+              "sets": 1,
+              "reps": "10 min",
+              "weight": null
+            },
+            {
+              "week": 2,
+              "sets": 1,
+              "reps": "10 min",
+              "weight": null
+            },
+            {
+              "week": 3,
+              "sets": 1,
+              "reps": "10 min",
+              "weight": null
+            },
+            {
+              "week": 4,
+              "sets": 1,
+              "reps": "10 min",
+              "weight": null
+            },
+            {
+              "week": 5,
+              "sets": 1,
+              "reps": "10 min",
+              "weight": null
+            },
+            {
+              "week": 6,
+              "sets": 1,
+              "reps": "10 min",
+              "weight": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

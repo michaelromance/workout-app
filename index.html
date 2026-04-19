@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Workout" />
+<meta name="theme-color" content="#0a0e14" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<title>Workout</title>
+<style>
+  /* ---------- Design tokens: default = dark ---------- */
+  :root {
+    --bg: #0a0e14;
+    --panel: #131821;
+    --panel-2: #1a2130;
+    --border: #242c3d;
+    --text: #e8ecf4;
+    --text-muted: #8b93a8;
+    --text-dim: #5a6378;
+    --accent: #4ade80;
+    --accent-dim: #1f4d30;
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --phase-0: #1f4d30;
+    --phase-1: #3d4200;
+    --phase-2: #4a2a00;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not(.force-dark) {
+      --bg: #f5f5f7;
+      --panel: #ffffff;
+      --panel-2: #f0f0f3;
+      --border: #e0e0e6;
+      --text: #1a1a1f;
+      --text-muted: #6e6e78;
+      --text-dim: #a0a0aa;
+      --accent: #16a34a;
+      --accent-dim: #d1fae5;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --phase-0: #d1fae5;
+      --phase-1: #fef3c7;
+      --phase-2: #fed7aa;
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+  }
+  :root.force-light {
+    --bg: #f5f5f7;
+    --panel: #ffffff;
+    --panel-2: #f0f0f3;
+    --border: #e0e0e6;
+    --text: #1a1a1f;
+    --text-muted: #6e6e78;
+    --text-dim: #a0a0aa;
+    --accent: #16a34a;
+    --accent-dim: #d1fae5;
+    --warn: #d97706;
+    --danger: #dc2626;
+    --phase-0: #d1fae5;
+    --phase-1: #fef3c7;
+    --phase-2: #fed7aa;
+    --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: contain;
+  }
+  body {
+    min-height: 100vh;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+  input, button, select, textarea {
+    font-family: inherit; color: inherit; background: transparent; border: none; outline: none;
+  }
+  button { cursor: pointer; }
+
+  /* ---------- App shell ---------- */
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: env(safe-area-inset-top, 0px) 0 0;
+  }
+  .header {
+    padding: 16px 20px 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 8px;
+  }
+  .header h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .header .sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .theme-toggle {
+    display: flex;
+    background: var(--panel);
+    border-radius: 999px;
+    padding: 3px;
+    border: 1px solid var(--border);
+  }
+  .theme-toggle button {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .theme-toggle button.active {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+
+  /* ---------- Tab bar ---------- */
+  .tabbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    justify-content: space-around;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .tabbar button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    flex: 1;
+    transition: color 0.15s;
+  }
+  .tabbar button .icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+  .tabbar button.active { color: var(--accent); }
+
+  /* ---------- Screens ---------- */
+  .screen { padding: 0 16px 24px; display: none; }
+  .screen.active { display: block; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .muted { color: var(--text-muted); font-size: 13px; }
+  .dim { color: var(--text-dim); font-size: 12px; }
+
+  /* ---------- Block grid (screen 1) ---------- */
+  .week-row {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .week-head {
+    padding: 10px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px;
+  }
+  .week-head .wname { font-weight: 600; font-size: 14px; }
+  .week-head .phase-chip {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .phase-0 .phase-chip { background: var(--phase-0); color: var(--text); }
+  .phase-1 .phase-chip { background: var(--phase-1); color: var(--text); }
+  .phase-2 .phase-chip { background: var(--phase-2); color: var(--text); }
+  .phase-0 .week-head { border-left: 3px solid var(--accent); }
+  .phase-1 .week-head { border-left: 3px solid var(--warn); }
+  .phase-2 .week-head { border-left: 3px solid #f97316; }
+
+  .day-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+  }
+  .day-cell {
+    background: var(--panel);
+    padding: 10px 6px;
+    font-size: 11px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .day-cell:hover { background: var(--panel-2); }
+  .day-cell .dlabel { font-size: 10px; color: var(--text-muted); letter-spacing: 0.2px; }
+  .day-cell .ddate { font-size: 11px; font-weight: 600; }
+  .day-cell .dstatus {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .day-cell.is-today {
+    background: var(--accent-dim);
+    border: 1.5px solid var(--accent);
+  }
+  .day-cell.is-today .dlabel, .day-cell.is-today .ddate { color: var(--text); }
+  .day-cell.completed .dstatus { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .day-cell.partial .dstatus { background: var(--warn); color: var(--bg); font-weight: 600; }
+
+  /* ---------- Today screen ---------- */
+  .today-banner {
+    background: linear-gradient(135deg, var(--accent-dim), var(--panel));
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .today-banner .t1 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .today-banner .t2 { font-size: 20px; font-weight: 700; margin: 2px 0; }
+  .today-banner .t3 { font-size: 13px; color: var(--text-muted); }
+
+  .ex-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .ex-head {
+    padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .ex-head .ex-name { font-size: 15px; font-weight: 600; flex: 1; line-height: 1.3; }
+  .ex-head .ex-plan {
+    font-size: 12px; color: var(--text-muted);
+    text-align: right; flex-shrink: 0; min-width: 70px;
+  }
+  .ex-head .ex-plan strong { color: var(--text); font-weight: 600; }
+  .ex-cue {
+    font-size: 12px; color: var(--text-muted);
+    padding: 0 14px 10px;
+    line-height: 1.4;
+  }
+  .ex-sets { padding: 0 10px 10px; display: none; }
+  .ex-card.open .ex-sets { display: block; }
+  .ex-card.open .ex-head { background: var(--panel-2); }
+
+  .set-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 1fr 1fr 40px;
+    gap: 6px;
+    padding: 6px 4px;
+    align-items: center;
+  }
+  .set-row .sno {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    font-weight: 600;
+  }
+  .set-row input[type="number"] {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 6px;
+    font-size: 15px;
+    text-align: center;
+    width: 100%;
+    -moz-appearance: textfield;
+  }
+  .set-row input[type="number"]::-webkit-outer-spin-button,
+  .set-row input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  .set-row input:focus {
+    border-color: var(--accent);
+  }
+  .set-row .check {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--panel-2);
+    border: 1.5px solid var(--border);
+    font-size: 18px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim);
+    transition: all 0.15s;
+  }
+  .set-row.done .check {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .set-row.done input { color: var(--text-muted); }
+  .set-col-head {
+    display: grid;
+    grid-template-columns: 32px 1fr 1fr 1fr 40px;
+    gap: 6px;
+    padding: 0 4px 4px;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+  }
+  .add-set {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border-radius: var(--radius-sm);
+    background: var(--panel-2);
+    color: var(--text-muted);
+    font-size: 13px;
+    border: 1px dashed var(--border);
+  }
+  .add-set:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- Rest timer ---------- */
+  .rest-timer {
+    position: fixed;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 10px);
+    left: 16px; right: 16px;
+    max-width: 448px;
+    margin: 0 auto;
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    z-index: 50;
+  }
+  .rest-timer.active { display: flex; }
+  .rest-timer .rt-time {
+    font-size: 22px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    min-width: 70px;
+  }
+  .rest-timer .rt-label { flex: 1; font-size: 12px; color: var(--text-muted); }
+  .rest-timer .rt-btn {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  /* ---------- Readiness ---------- */
+  .readiness-group {
+    margin-bottom: 14px;
+  }
+  .readiness-group .g-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .rating-row {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  }
+  .rating-row button {
+    padding: 10px 6px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .rating-row button .emj { font-size: 20px; }
+  .rating-row button.selected {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .rating-row button.selected .emj { filter: brightness(1.2); }
+
+  textarea.notes-box {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    font-size: 14px;
+    min-height: 70px;
+    resize: vertical;
+    color: var(--text);
+  }
+
+  /* ---------- Progress ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .stat-grid .stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .stat .stat-v {
+    font-size: 22px; font-weight: 700;
+    color: var(--accent);
+  }
+  .stat .stat-l {
+    font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.3px; margin-top: 2px;
+  }
+
+  .session-log-item {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px;
+  }
+  .session-log-item .slabel { font-weight: 600; }
+  .session-log-item .sdate { color: var(--text-muted); font-size: 12px; }
+  .session-log-item .svol { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Buttons ---------- */
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 15px;
+    width: 100%;
+  }
+  .btn-secondary {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+  }
+
+  /* ---------- Misc ---------- */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pr-badge {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1a1f;
+  }
+
+  /* ---------- Back button ---------- */
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 14px;
+    color: var(--text-muted);
+    padding: 6px 0;
+  }
+  .back-btn:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header (shared) -->
+  <div class="header">
+    <div>
+      <h1 id="header-title">Block 1</h1>
+      <div class="sub" id="header-sub">6 weeks · U/L/U/L · Hypertrophy + Recomp</div>
+    </div>
+    <div class="theme-toggle" role="radiogroup" aria-label="Theme">
+      <button data-theme="auto" class="active">Auto</button>
+      <button data-theme="light">Light</button>
+      <button data-theme="dark">Dark</button>
+    </div>
+  </div>
+
+  <!-- Screen: Block view -->
+  <div class="screen active" id="screen-block">
+    <div id="block-grid"></div>
+    <div class="dim" style="text-align:center; margin-top:16px;">Tap any day to open that session.</div>
+  </div>
+
+  <!-- Screen: Today/Session -->
+  <div class="screen" id="screen-today">
+    <button class="back-btn" id="back-to-block" style="display:none;">&lsaquo; Block</button>
+    <div class="today-banner">
+      <div class="t1" id="today-tag">Today</div>
+      <div class="t2" id="today-name">—</div>
+      <div class="t3" id="today-meta">—</div>
+    </div>
+    <div id="exercise-list"></div>
+    <div style="margin-top: 16px;">
+      <button class="btn-primary" id="btn-finish-session">Finish Session</button>
+    </div>
+  </div>
+
+  <!-- Screen: Readiness -->
+  <div class="screen" id="screen-readiness">
+    <div class="card">
+      <div class="card-title">How you feeling today?</div>
+      <div class="muted" style="margin-bottom:14px;" id="readiness-session-hint">—</div>
+
+      <div id="readiness-groups"></div>
+
+      <div class="readiness-group">
+        <div class="g-label">Notes (optional)</div>
+        <textarea class="notes-box" id="readiness-notes" placeholder="Sleep quality, stress, anything weird?"></textarea>
+      </div>
+
+      <button class="btn-primary" id="btn-save-readiness">Save &amp; go to today's session</button>
+    </div>
+  </div>
+
+  <!-- Screen: Progress -->
+  <div class="screen" id="screen-progress">
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-v" id="stat-streak">0</div><div class="stat-l">Streak</div></div>
+      <div class="stat"><div class="stat-v" id="stat-sessions">0</div><div class="stat-l">Sessions</div></div>
+      <div class="stat"><div class="stat-v" id="stat-volume">0</div><div class="stat-l">Total lb</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recent sessions</div>
+      <div id="session-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Personal Records</div>
+      <div id="pr-list" class="muted">Complete sessions to start logging PRs.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Data</div>
+      <button class="btn-secondary" id="btn-export">Export JSON backup</button>
+      <div style="height:8px;"></div>
+      <button class="btn-secondary" id="btn-reset" style="color:var(--danger);border-color:var(--danger);">Reset all data</button>
+    </div>
+  </div>
+
+  <!-- Rest timer -->
+  <div class="rest-timer" id="rest-timer">
+    <div class="rt-time" id="rt-time">0:00</div>
+    <div class="rt-label" id="rt-label">Resting…</div>
+    <button class="rt-btn" id="rt-add">+30s</button>
+    <button class="rt-btn" id="rt-stop">Skip</button>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tabbar">
+    <button data-tab="block" class="active"><span class="icon">▦</span><span>Block</span></button>
+    <button data-tab="today"><span class="icon">▶</span><span>Today</span></button>
+    <button data-tab="readiness"><span class="icon">♨</span><span>Ready</span></button>
+    <button data-tab="progress"><span class="icon">↗</span><span>Progress</span></button>
+  </div>
+
+</div>
+
+<script>
+/* ================================================================
+   Workout PWA — single-file app
+   M1: PWA foundation + theme + block loading
+   M2: Session logging, set editor, rest timer, readiness, progress
+   ================================================================ */
+
+const LS = {
+  logs: 'workout-app:logs',
+  readiness: 'workout-app:readiness',
+  prefs: 'workout-app:prefs',
+  ui: 'workout-app:ui',
+};
+
+const state = {
+  block: null,
+  currentSessionId: null,   // "d1-w1"
+  activeScreen: 'block',
+  logs: {},                 // { sessionId: {date, dayId, week, exercises: [{name, sets:[{reps,weight,rpe,done}]}], finishedAt} }
+  readiness: {},            // { date: {legs,chest,back,shoulders,arms,notes} }
+  prefs: { theme: 'auto' },
+  restTimer: null,
+  openExercises: new Set(), // names of open exercise cards, preserved across re-renders
+};
+
+/* ---------------- Storage helpers ---------------- */
+function loadStorage() {
+  try { state.logs = JSON.parse(localStorage.getItem(LS.logs)) || {}; } catch(e) { state.logs = {}; }
+  try { state.readiness = JSON.parse(localStorage.getItem(LS.readiness)) || {}; } catch(e) { state.readiness = {}; }
+  try { state.prefs = Object.assign({theme:'auto'}, JSON.parse(localStorage.getItem(LS.prefs)) || {}); } catch(e) { state.prefs = {theme:'auto'}; }
+}
+function saveLogs() { localStorage.setItem(LS.logs, JSON.stringify(state.logs)); }
+function saveReadiness() { localStorage.setItem(LS.readiness, JSON.stringify(state.readiness)); }
+function savePrefs() { localStorage.setItem(LS.prefs, JSON.stringify(state.prefs)); }
+
+/* ---------------- Theme ---------------- */
+function applyTheme(mode) {
+  const root = document.documentElement;
+  root.classList.remove('force-light', 'force-dark');
+  if (mode === 'light') root.classList.add('force-light');
+  if (mode === 'dark') root.classList.add('force-dark');
+  document.querySelectorAll('.theme-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === mode);
+  });
+  state.prefs.theme = mode;
+  savePrefs();
+}
+
+/* ---------------- Date helpers ---------------- */
+function todayISO() {
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function fmtDate(iso) {
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  return dt.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+}
+function isoWeekday(iso) {
+  const [y,m,d] = iso.split('-').map(Number);
+  return new Date(y, m-1, d).getDay(); // 0=Sun
+}
+
+/* Figure out today's session: which (dayId, week) does today's date map to? */
+function computeCurrentSession() {
+  const today = todayISO();
+  // First check if today's date appears in any dateByWeek
+  for (const day of state.block.days) {
+    const idx = day.dateByWeek.indexOf(today);
+    if (idx !== -1) {
+      return { dayId: day.dayId, week: idx + 1, label: day.label, day, exact: true };
+    }
+  }
+  // Fallback: find the next upcoming day
+  let best = null;
+  for (const day of state.block.days) {
+    for (let wi = 0; wi < day.dateByWeek.length; wi++) {
+      const d = day.dateByWeek[wi];
+      if (d >= today) {
+        if (!best || d < best.date) {
+          best = { dayId: day.dayId, week: wi + 1, label: day.label, day, date: d, exact: false };
+        }
+      }
+    }
+  }
+  if (best) return best;
+  // Past the block? Return the last session.
+  const lastDay = state.block.days[state.block.days.length - 1];
+  return {
+    dayId: lastDay.dayId, week: state.block.weeks, label: lastDay.label, day: lastDay, exact: false
+  };
+}
+
+function sessionId(dayId, week) { return `${dayId}-w${week}`; }
+function phaseForWeek(week) {
+  const p = state.block.phases.find(ph => ph.week === week);
+  return p || state.block.phases[0];
+}
+function phaseClass(week) {
+  const p = phaseForWeek(week);
+  if (p.label.startsWith('Phase 0')) return 'phase-0';
+  if (p.label.startsWith('Phase 1')) return 'phase-1';
+  return 'phase-2';
+}
+
+/* Convert plan for (day, week) into default sets[] */
+function planToSets(ex, week) {
+  const p = ex.plan[week - 1];
+  const sets = [];
+  const n = (typeof p.sets === 'number') ? p.sets : 1;
+  for (let i = 0; i < n; i++) {
+    sets.push({
+      reps: p.reps,
+      weight: p.weight,
+      rpe: null,
+      done: false,
+    });
+  }
+  return sets;
+}
+
+/* Get or initialize session log */
+function getOrInitSessionLog(dayId, week) {
+  const sid = sessionId(dayId, week);
+  if (state.logs[sid]) return state.logs[sid];
+  const day = state.block.days.find(d => d.dayId === dayId);
+  const log = {
+    sessionId: sid,
+    date: day.dateByWeek[week - 1],
+    dayId, week,
+    label: day.label,
+    exercises: day.exercises.map(ex => ({
+      name: ex.name,
+      type: ex.type,
+      unit: ex.unit,
+      cue: ex.cue,
+      sets: planToSets(ex, week),
+    })),
+    startedAt: null,
+    finishedAt: null,
+  };
+  state.logs[sid] = log;
+  saveLogs();
+  return log;
+}
+
+function sessionVolume(log) {
+  let vol = 0;
+  for (const ex of log.exercises) {
+    if (ex.type !== 'weighted') continue;
+    for (const s of ex.sets) {
+      if (!s.done) continue;
+      const reps = parseInt(s.reps) || 0;
+      const wt = parseFloat(s.weight) || 0;
+      vol += reps * wt;
+    }
+  }
+  return Math.round(vol);
+}
+
+function sessionProgress(log) {
+  // Returns 'complete', 'partial', or 'empty'
+  let total = 0, done = 0;
+  for (const ex of log.exercises) {
+    if (ex.type === 'mobility') continue;
+    for (const s of ex.sets) { total++; if (s.done) done++; }
+  }
+  if (done === 0) return 'empty';
+  if (done >= total) return 'complete';
+  return 'partial';
+}
+
+/* ---------------- Rendering: Block view ---------------- */
+function renderBlock() {
+  const host = document.getElementById('block-grid');
+  const today = todayISO();
+  host.innerHTML = '';
+  for (let w = 1; w <= state.block.weeks; w++) {
+    const phase = phaseForWeek(w);
+    const pcls = phaseClass(w);
+    const wrap = document.createElement('div');
+    wrap.className = `week-row ${pcls}`;
+    const head = document.createElement('div');
+    head.className = 'week-head';
+    head.innerHTML = `
+      <div>
+        <div class="wname">Week ${w}</div>
+        <div class="dim">${phase.theme}</div>
+      </div>
+      <div class="phase-chip">${phase.label.replace('Phase ','P')} · RPE ${phase.rpeTarget}</div>
+    `;
+    wrap.appendChild(head);
+    const grid = document.createElement('div');
+    grid.className = 'day-grid';
+    for (const day of state.block.days) {
+      const d = day.dateByWeek[w - 1];
+      const sid = sessionId(day.dayId, w);
+      const log = state.logs[sid];
+      const prog = log ? sessionProgress(log) : 'empty';
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      if (d === today) cell.classList.add('is-today');
+      if (prog === 'complete') cell.classList.add('completed');
+      else if (prog === 'partial') cell.classList.add('partial');
+      const status = prog === 'complete' ? '✓' : (prog === 'partial' ? '·' : day.label.split(' ')[1][0]);
+      cell.innerHTML = `
+        <div class="dlabel">${day.label.split(' ')[0].slice(0,3)}</div>
+        <div class="ddate">${fmtDate(d)}</div>
+        <div class="dstatus">${status}</div>
+      `;
+      cell.addEventListener('click', () => openSession(day.dayId, w));
+      grid.appendChild(cell);
+    }
+    wrap.appendChild(grid);
+    host.appendChild(wrap);
+  }
+}
+
+/* ---------------- Rendering: Today/Session ---------------- */
+function openSession(dayId, week) {
+  const newId = sessionId(dayId, week);
+  if (newId !== state.currentSessionId) state.openExercises.clear();
+  state.currentSessionId = newId;
+  switchTab('today');
+  renderToday();
+}
+
+function setsDoneStr(ex) {
+  let d = 0, t = 0;
+  for (const s of ex.sets) { t++; if (s.done) d++; }
+  return `${d}/${t}`;
+}
+
+function planLabel(ex, log) {
+  const firstSet = ex.sets[0];
+  if (ex.type === 'mobility') return firstSet.reps;
+  if (ex.type === 'bodyweight') {
+    return `<strong>${ex.sets.length} × ${firstSet.reps}</strong>`;
+  }
+  return `<strong>${ex.sets.length} × ${firstSet.reps}</strong><br><span style="font-size:11px;">@ ${firstSet.weight || '—'} lb</span>`;
+}
+
+function renderToday() {
+  let log;
+  if (state.currentSessionId) {
+    const [dayId, wpart] = state.currentSessionId.split('-w');
+    log = getOrInitSessionLog(dayId, parseInt(wpart));
+  } else {
+    const cur = computeCurrentSession();
+    state.currentSessionId = sessionId(cur.dayId, cur.week);
+    log = getOrInitSessionLog(cur.dayId, cur.week);
+  }
+  if (!log.startedAt) { log.startedAt = new Date().toISOString(); saveLogs(); }
+
+  const phase = phaseForWeek(log.week);
+  document.getElementById('today-tag').textContent = log.date === todayISO() ? 'Today · Week ' + log.week : 'Week ' + log.week;
+  document.getElementById('today-name').textContent = log.label;
+  document.getElementById('today-meta').innerHTML = `${fmtDate(log.date)} · ${phase.label} · Target RPE ${phase.rpeTarget}`;
+
+  // Back button visible if this isn't today's actual session
+  document.getElementById('back-to-block').style.display = 'inline-flex';
+
+  const host = document.getElementById('exercise-list');
+  host.innerHTML = '';
+
+  log.exercises.forEach((ex, exIdx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    if (ex.type === 'mobility') card.classList.add('mobility');
+    if (state.openExercises.has(ex.name)) card.classList.add('open');
+
+    const head = document.createElement('div');
+    head.className = 'ex-head';
+    head.innerHTML = `
+      <div class="ex-name">
+        ${ex.name}
+        ${ex.type !== 'mobility' ? `<div class="muted" style="font-size:11px;margin-top:2px;">${setsDoneStr(ex)} sets done</div>` : ''}
+      </div>
+      <div class="ex-plan">${planLabel(ex, log)}</div>
+    `;
+    card.appendChild(head);
+
+    if (ex.cue) {
+      const cue = document.createElement('div');
+      cue.className = 'ex-cue';
+      cue.textContent = ex.cue;
+      card.appendChild(cue);
+    }
+
+    if (ex.type !== 'mobility') {
+      const sets = document.createElement('div');
+      sets.className = 'ex-sets';
+      const hdr = document.createElement('div');
+      hdr.className = 'set-col-head';
+      hdr.innerHTML = `<div></div><div>Reps</div><div>${ex.type==='bodyweight'?'—':'Weight'}</div><div>RPE</div><div></div>`;
+      sets.appendChild(hdr);
+
+      ex.sets.forEach((s, sIdx) => {
+        const row = document.createElement('div');
+        row.className = 'set-row' + (s.done ? ' done' : '');
+        row.innerHTML = `
+          <div class="sno">${sIdx + 1}</div>
+          <input type="number" inputmode="numeric" value="${s.reps ?? ''}" data-field="reps" />
+          <input type="number" inputmode="decimal" value="${s.weight ?? ''}" data-field="weight" ${ex.type==='bodyweight'?'placeholder="BW" disabled':''} />
+          <input type="number" inputmode="numeric" step="0.5" min="1" max="10" value="${s.rpe ?? ''}" data-field="rpe" placeholder="—" />
+          <button class="check" data-act="toggle">${s.done?'✓':''}</button>
+        `;
+        row.querySelectorAll('input').forEach(inp => {
+          inp.addEventListener('change', () => {
+            const f = inp.dataset.field;
+            const val = inp.value.trim();
+            if (f === 'reps') s.reps = val === '' ? '' : (isNaN(val) ? val : parseInt(val));
+            else if (f === 'weight') s.weight = val === '' ? null : parseFloat(val);
+            else if (f === 'rpe') s.rpe = val === '' ? null : parseFloat(val);
+            saveLogs();
+          });
+        });
+        row.querySelector('[data-act="toggle"]').addEventListener('click', () => {
+          s.done = !s.done;
+          if (s.done) {
+            // mark timestamp + start rest
+            s.completedAt = new Date().toISOString();
+            const restSec = ex.type === 'bodyweight' ? 60 : (exIdx < 2 ? 150 : 90);
+            startRestTimer(restSec, ex.name);
+          }
+          saveLogs();
+          renderToday();
+        });
+        sets.appendChild(row);
+      });
+
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-set';
+      addBtn.textContent = '+ Add set';
+      addBtn.addEventListener('click', () => {
+        const last = ex.sets[ex.sets.length - 1];
+        ex.sets.push({
+          reps: last ? last.reps : '',
+          weight: last ? last.weight : null,
+          rpe: null, done: false,
+        });
+        saveLogs();
+        renderToday();
+      });
+      sets.appendChild(addBtn);
+      card.appendChild(sets);
+    }
+
+    // Toggle open on head click
+    head.addEventListener('click', () => {
+      if (ex.type !== 'mobility') {
+        if (state.openExercises.has(ex.name)) state.openExercises.delete(ex.name);
+        else state.openExercises.add(ex.name);
+        card.classList.toggle('open');
+      }
+    });
+
+    host.appendChild(card);
+  });
+}
+
+/* ---------------- Rest timer ---------------- */
+function startRestTimer(seconds, exName) {
+  stopRestTimer();
+  state.restTimer = {
+    endTs: Date.now() + seconds * 1000,
+    label: 'Rest · ' + exName,
+  };
+  tickRestTimer();
+  state.restTimerInterval = setInterval(tickRestTimer, 500);
+}
+function stopRestTimer() {
+  clearInterval(state.restTimerInterval);
+  state.restTimer = null;
+  document.getElementById('rest-timer').classList.remove('active');
+}
+function tickRestTimer() {
+  if (!state.restTimer) return;
+  const remain = Math.ceil((state.restTimer.endTs - Date.now()) / 1000);
+  const el = document.getElementById('rest-timer');
+  el.classList.add('active');
+  const mins = Math.floor(Math.max(0, remain) / 60);
+  const secs = Math.max(0, remain) % 60;
+  document.getElementById('rt-time').textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+  document.getElementById('rt-label').textContent = state.restTimer.label;
+  if (remain <= 0) {
+    document.getElementById('rt-time').textContent = '0:00';
+    document.getElementById('rt-label').textContent = 'Rest done. Go.';
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    setTimeout(stopRestTimer, 2000);
+    clearInterval(state.restTimerInterval);
+  }
+}
+
+/* ---------------- Readiness ---------------- */
+const READINESS_GROUPS = [
+  { key: 'legs', label: 'Legs' },
+  { key: 'chest', label: 'Chest' },
+  { key: 'back', label: 'Back' },
+  { key: 'shoulders', label: 'Shoulders' },
+  { key: 'arms', label: 'Arms' },
+];
+const RATING_OPTIONS = [
+  { val: 1, emj: '😁', label: 'Fresh' },
+  { val: 2, emj: '🙂', label: 'Normal' },
+  { val: 3, emj: '😐', label: 'Tight' },
+  { val: 4, emj: '😣', label: 'Sore' },
+  { val: 5, emj: '🤕', label: 'Painful' },
+];
+
+function renderReadiness() {
+  const host = document.getElementById('readiness-groups');
+  host.innerHTML = '';
+  const today = todayISO();
+  const r = state.readiness[today] || { notes: '' };
+  const cur = computeCurrentSession();
+  document.getElementById('readiness-session-hint').textContent =
+    `Heading into: ${cur.label}${cur.exact ? ' (today)' : ' (next up)'}`;
+
+  for (const g of READINESS_GROUPS) {
+    const wrap = document.createElement('div');
+    wrap.className = 'readiness-group';
+    const label = document.createElement('div');
+    label.className = 'g-label';
+    label.textContent = g.label;
+    wrap.appendChild(label);
+    const row = document.createElement('div');
+    row.className = 'rating-row';
+    for (const opt of RATING_OPTIONS) {
+      const b = document.createElement('button');
+      const selected = r[g.key] === opt.val;
+      if (selected) b.className = 'selected';
+      b.innerHTML = `<span class="emj">${opt.emj}</span><span>${opt.label}</span>`;
+      b.addEventListener('click', () => {
+        r[g.key] = opt.val;
+        state.readiness[today] = r;
+        saveReadiness();
+        renderReadiness();
+      });
+      row.appendChild(b);
+    }
+    wrap.appendChild(row);
+    host.appendChild(wrap);
+  }
+  document.getElementById('readiness-notes').value = r.notes || '';
+  document.getElementById('readiness-notes').oninput = (e) => {
+    r.notes = e.target.value;
+    state.readiness[today] = r;
+    saveReadiness();
+  };
+}
+
+/* ---------------- Progress ---------------- */
+function computeStreak() {
+  // Count consecutive completed sessions working backwards from latest
+  const completed = Object.values(state.logs)
+    .filter(l => sessionProgress(l) === 'complete')
+    .sort((a, b) => b.date.localeCompare(a.date));
+  if (completed.length === 0) return 0;
+  // Streak = how many completed sessions back-to-back in block-order
+  // Simpler: count number of completed sessions since last gap
+  let streak = 0;
+  const sortedDays = [];
+  for (let w = 1; w <= state.block.weeks; w++) {
+    for (const d of state.block.days) sortedDays.push({dayId:d.dayId, week:w, date:d.dateByWeek[w-1]});
+  }
+  sortedDays.sort((a,b)=>a.date.localeCompare(b.date));
+  const today = todayISO();
+  const past = sortedDays.filter(x => x.date <= today).reverse();
+  for (const p of past) {
+    const sid = sessionId(p.dayId, p.week);
+    const log = state.logs[sid];
+    if (log && sessionProgress(log) === 'complete') streak++;
+    else break;
+  }
+  return streak;
+}
+
+function renderProgress() {
+  const logs = Object.values(state.logs)
+    .filter(l => sessionProgress(l) !== 'empty')
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  let totalVol = 0;
+  for (const l of logs) totalVol += sessionVolume(l);
+
+  document.getElementById('stat-streak').textContent = computeStreak();
+  document.getElementById('stat-sessions').textContent = logs.filter(l => sessionProgress(l)==='complete').length;
+  document.getElementById('stat-volume').textContent = totalVol.toLocaleString();
+
+  const sHost = document.getElementById('session-list');
+  if (logs.length === 0) {
+    sHost.innerHTML = '<div class="muted">No sessions yet. Start Week 1.</div>';
+  } else {
+    sHost.innerHTML = '';
+    for (const l of logs.slice(0, 15)) {
+      const item = document.createElement('div');
+      item.className = 'session-log-item';
+      const vol = sessionVolume(l);
+      const prog = sessionProgress(l);
+      item.innerHTML = `
+        <div>
+          <div class="slabel">${l.label} <span class="badge">W${l.week}</span></div>
+          <div class="sdate">${fmtDate(l.date)}${prog==='partial'?' · partial':''}</div>
+        </div>
+        <div class="svol">${vol.toLocaleString()} lb</div>
+      `;
+      item.addEventListener('click', () => openSession(l.dayId, l.week));
+      sHost.appendChild(item);
+    }
+  }
+
+  // PRs: for each unique exercise, find the highest top-set weight ever completed
+  const prs = {};
+  for (const l of logs) {
+    for (const ex of l.exercises) {
+      if (ex.type !== 'weighted') continue;
+      for (const s of ex.sets) {
+        if (!s.done) continue;
+        const w = parseFloat(s.weight) || 0;
+        const r = parseInt(s.reps) || 0;
+        if (w <= 0 || r <= 0) continue;
+        if (!prs[ex.name] || w > prs[ex.name].weight || (w === prs[ex.name].weight && r > prs[ex.name].reps)) {
+          prs[ex.name] = { weight: w, reps: r, date: l.date };
+        }
+      }
+    }
+  }
+  const prHost = document.getElementById('pr-list');
+  const keys = Object.keys(prs);
+  if (keys.length === 0) {
+    prHost.innerHTML = '<span class="muted">Complete sessions to start logging PRs.</span>';
+  } else {
+    prHost.classList.remove('muted');
+    prHost.innerHTML = keys.sort().map(k =>
+      `<div class="session-log-item">
+        <div>
+          <div class="slabel">${k} <span class="badge pr-badge">PR</span></div>
+          <div class="sdate">${fmtDate(prs[k].date)}</div>
+        </div>
+        <div class="svol">${prs[k].weight} × ${prs[k].reps}</div>
+      </div>`
+    ).join('');
+  }
+}
+
+/* ---------------- Tab switching ---------------- */
+function switchTab(name) {
+  state.activeScreen = name;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.tabbar button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === name);
+  });
+  if (name === 'block') renderBlock();
+  if (name === 'today') renderToday();
+  if (name === 'readiness') renderReadiness();
+  if (name === 'progress') renderProgress();
+}
+
+/* ---------------- Wire up ---------------- */
+function wireUp() {
+  document.querySelectorAll('.theme-toggle button').forEach(b => {
+    b.addEventListener('click', () => applyTheme(b.dataset.theme));
+  });
+  document.querySelectorAll('.tabbar button').forEach(b => {
+    b.addEventListener('click', () => switchTab(b.dataset.tab));
+  });
+  document.getElementById('back-to-block').addEventListener('click', () => {
+    state.currentSessionId = null;
+    switchTab('block');
+  });
+  document.getElementById('btn-finish-session').addEventListener('click', () => {
+    const log = state.logs[state.currentSessionId];
+    if (!log) return;
+    log.finishedAt = new Date().toISOString();
+    saveLogs();
+    state.currentSessionId = null;
+    switchTab('progress');
+  });
+  document.getElementById('btn-save-readiness').addEventListener('click', () => {
+    switchTab('today');
+  });
+  document.getElementById('rt-add').addEventListener('click', () => {
+    if (state.restTimer) state.restTimer.endTs += 30000;
+  });
+  document.getElementById('rt-stop').addEventListener('click', stopRestTimer);
+
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const data = {
+      exportedAt: new Date().toISOString(),
+      logs: state.logs,
+      readiness: state.readiness,
+      prefs: state.prefs,
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `workout-backup-${todayISO()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (!confirm('Wipe all logs, readiness, and prefs? This cannot be undone.')) return;
+    localStorage.removeItem(LS.logs);
+    localStorage.removeItem(LS.readiness);
+    localStorage.removeItem(LS.prefs);
+    location.reload();
+  });
+}
+
+/* ---------------- Init ---------------- */
+async function init() {
+  loadStorage();
+  applyTheme(state.prefs.theme || 'auto');
+  try {
+    const resp = await fetch('block1.json');
+    state.block = await resp.json();
+  } catch (e) {
+    document.body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--danger);">Could not load block1.json. Please serve via http (not file://).</div>';
+    return;
+  }
+  wireUp();
+  switchTab('block');
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW register failed', err));
+  }
+}
+
+init();
+</script>
+</body>
+</html>
