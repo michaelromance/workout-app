@@ -557,6 +557,9 @@
       <div class="card-title">Data</div>
       <button class="btn-secondary" id="btn-export">Export JSON backup</button>
       <div style="height:8px;"></div>
+      <button class="btn-secondary" id="btn-import">Import from backup</button>
+      <input type="file" id="import-file" accept=".json" style="display:none;" />
+      <div style="height:8px;"></div>
       <button class="btn-secondary" id="btn-reset" style="color:var(--danger);border-color:var(--danger);">Reset all data</button>
     </div>
   </div>
@@ -1107,6 +1110,12 @@ function wireUp() {
     saveLogs();
     state.currentSessionId = null;
     switchTab('progress');
+    // Nudge backup export after finishing a session
+    setTimeout(() => {
+      if (confirm('Session saved! Export a backup now? (Recommended)')) {
+        document.getElementById('btn-export').click();
+      }
+    }, 300);
   });
   document.getElementById('rt-add').addEventListener('click', () => {
     if (state.restTimer) state.restTimer.endTs += 30000;
@@ -1126,6 +1135,39 @@ function wireUp() {
     a.download = `workout-backup-${todayISO()}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  });
+  document.getElementById('btn-import').addEventListener('click', () => {
+    document.getElementById('import-file').click();
+  });
+  document.getElementById('import-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (!data.logs) throw new Error('No logs found in backup');
+        const logCount = Object.keys(data.logs).length;
+        const sessionsDone = Object.values(data.logs).filter(l => l.finishedAt).length;
+        if (!confirm(`Import ${logCount} session(s) (${sessionsDone} finished)? This will merge with any existing data.`)) return;
+        // Merge: imported data wins for any overlapping session IDs
+        const merged = Object.assign({}, state.logs, data.logs);
+        state.logs = merged;
+        saveLogs();
+        if (data.prefs) {
+          state.prefs = Object.assign(state.prefs, data.prefs);
+          savePrefs();
+          applyTheme(state.prefs.theme);
+        }
+        alert('Backup restored! ' + logCount + ' session(s) loaded.');
+        renderProgress();
+        renderBlock();
+      } catch (err) {
+        alert('Import failed: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ''; // reset so same file can be re-imported
   });
   document.getElementById('btn-reset').addEventListener('click', () => {
     if (!confirm('Wipe all logs and prefs? This cannot be undone.')) return;
