@@ -284,6 +284,9 @@
     padding: 2px 8px;
     border-radius: 999px;
     margin-top: 2px;
+    min-width: 44px;
+    justify-content: center;
+    height: 22px;
   }
   .ex-status-badge.complete {
     background: var(--accent);
@@ -375,6 +378,27 @@
     border: 1px dashed var(--border);
   }
   .add-set:hover { color: var(--accent); border-color: var(--accent); }
+  .remove-set {
+    width: 100%;
+    padding: 6px 8px;
+    margin-top: 4px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--danger);
+    font-size: 12px;
+    border: 1px dashed var(--danger);
+    opacity: 0.5;
+    display: none;
+  }
+  .remove-set.visible { display: block; }
+  .remove-set:hover { opacity: 1; }
+
+  .weight-detail {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 1px;
+    font-weight: 400;
+  }
 
   /* ---------- Rest timer ---------- */
   .rest-timer {
@@ -551,6 +575,23 @@
     <div class="card">
       <div class="card-title">Personal Records</div>
       <div id="pr-list" class="muted">Complete sessions to start logging PRs.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Settings</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div>
+          <div style="font-size:14px; font-weight:500;">Smith bar weight</div>
+          <div class="dim">Used for plate-per-side math</div>
+        </div>
+        <select id="smith-bar-weight" style="background:var(--panel-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 12px; font-size:15px; color:var(--text); min-width:80px; text-align:center;">
+          <option value="15">15 lb</option>
+          <option value="20">20 lb</option>
+          <option value="25">25 lb</option>
+          <option value="35">35 lb</option>
+          <option value="45">45 lb</option>
+        </select>
+      </div>
     </div>
 
     <div class="card">
@@ -810,13 +851,39 @@ function setsDoneStr(ex) {
   return `${d}/${t}`;
 }
 
+function isSmithOrBar(name) {
+  return /^smith\b/i.test(name);
+}
+function isDumbbell(name) {
+  return /^db\b/i.test(name) || /\bholding dbs?\b/i.test(name) || /^dumbbell\b/i.test(name);
+}
+function isBulgarianOrLunge(name) {
+  return /bulgarian|lunge|split squat/i.test(name);
+}
+function weightDetail(name, weight) {
+  if (!weight) return '';
+  if (isSmithOrBar(name)) {
+    const barWt = state.prefs.smithBarWeight || 15;
+    const perSide = Math.round(((weight - barWt) / 2) * 10) / 10;
+    if (perSide > 0) {
+      return `<div class="weight-detail">${perSide} lb ea side + ${barWt} lb bar</div>`;
+    }
+    return `<div class="weight-detail">bar only (${barWt} lb)</div>`;
+  }
+  if (isDumbbell(name) || isBulgarianOrLunge(name)) {
+    return `<div class="weight-detail">per DB</div>`;
+  }
+  return '';
+}
+
 function planLabel(ex, log) {
   const firstSet = ex.sets[0];
   if (ex.type === 'mobility') return firstSet.reps;
   if (ex.type === 'bodyweight') {
     return `<strong>${ex.sets.length} × ${firstSet.reps}</strong>`;
   }
-  return `<strong>${ex.sets.length} × ${firstSet.reps}</strong><br><span style="font-size:11px;">@ ${firstSet.weight || '—'} lb</span>`;
+  const detail = weightDetail(ex.name, firstSet.weight);
+  return `<strong>${ex.sets.length} × ${firstSet.reps}</strong><br><span style="font-size:11px;">@ ${firstSet.weight || '—'} lb</span>${detail}`;
 }
 
 function renderToday() {
@@ -934,6 +1001,26 @@ function renderToday() {
         renderToday();
       });
       sets.appendChild(addBtn);
+
+      // Remove last set button — only shows if last set is not done and there are extra sets
+      const day = state.block.days.find(d => sessionId(d.dayId, log.week) === state.currentSessionId);
+      const planEx = day ? day.exercises.find(e => e.name === ex.name) : null;
+      const plannedSetCount = planEx ? (planEx.plan[log.week - 1]?.sets || 1) : ex.sets.length;
+      const lastSet = ex.sets[ex.sets.length - 1];
+      const canRemove = ex.sets.length > plannedSetCount && lastSet && !lastSet.done;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-set' + (canRemove ? ' visible' : '');
+      removeBtn.textContent = '− Remove last set';
+      removeBtn.addEventListener('click', () => {
+        if (ex.sets.length <= 1) return;
+        const last = ex.sets[ex.sets.length - 1];
+        if (last.done) return; // safety: don't remove completed sets
+        ex.sets.pop();
+        saveLogs();
+        renderToday();
+      });
+      sets.appendChild(removeBtn);
       card.appendChild(sets);
     }
 
@@ -948,6 +1035,27 @@ function renderToday() {
 
     host.appendChild(card);
   });
+}
+
+/* ---------------- Audio notification ---------------- */
+function playTimerBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const freqs = [660, 880, 1100];
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + i * 0.15);
+      osc.stop(ctx.currentTime + i * 0.15 + 0.25);
+    });
+    setTimeout(() => ctx.close(), 2000);
+  } catch(e) { /* audio not available */ }
 }
 
 /* ---------------- Rest timer ---------------- */
@@ -977,8 +1085,9 @@ function tickRestTimer() {
   if (remain <= 0) {
     document.getElementById('rt-time').textContent = '0:00';
     document.getElementById('rt-label').textContent = 'Rest done. Go.';
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-    setTimeout(stopRestTimer, 2000);
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+    playTimerBeep();
+    setTimeout(stopRestTimer, 3000);
     clearInterval(state.restTimerInterval);
   }
 }
@@ -1121,6 +1230,16 @@ function wireUp() {
     if (state.restTimer) state.restTimer.endTs += 30000;
   });
   document.getElementById('rt-stop').addEventListener('click', stopRestTimer);
+
+  // Smith bar weight setting
+  const barSelect = document.getElementById('smith-bar-weight');
+  barSelect.value = state.prefs.smithBarWeight || 15;
+  barSelect.addEventListener('change', () => {
+    state.prefs.smithBarWeight = parseInt(barSelect.value);
+    savePrefs();
+    // Re-render today if visible
+    if (state.activeScreen === 'today') renderToday();
+  });
 
   document.getElementById('btn-export').addEventListener('click', () => {
     const data = {
