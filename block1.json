@@ -3,7 +3,7 @@
   "name": "Block 1",
   "goal": "Hypertrophy + Recomp",
   "split": "4-day Upper/Lower/Upper/Lower",
-  "startDate": "2026-04-19",
+  "startDate": "2026-04-20",
   "weeks": 6,
   "phases": [
     {
@@ -47,15 +47,15 @@
     {
       "dayId": "d1",
       "dayIndex": 0,
-      "label": "Sunday Upper A",
-      "scheduledWeekday": 0,
+      "label": "Monday Upper A",
+      "scheduledWeekday": 1,
       "dateByWeek": [
-        "2026-04-19",
-        "2026-04-26",
-        "2026-05-03",
-        "2026-05-10",
-        "2026-05-17",
-        "2026-05-24"
+        "2026-04-20",
+        "2026-04-27",
+        "2026-05-04",
+        "2026-05-11",
+        "2026-05-18",
+        "2026-05-25"
       ],
       "exercises": [
         {
@@ -459,15 +459,15 @@
     {
       "dayId": "d2",
       "dayIndex": 1,
-      "label": "Monday Lower A",
-      "scheduledWeekday": 1,
+      "label": "Tuesday Lower A",
+      "scheduledWeekday": 2,
       "dateByWeek": [
-        "2026-04-20",
-        "2026-04-27",
-        "2026-05-04",
-        "2026-05-11",
-        "2026-05-18",
-        "2026-05-25"
+        "2026-04-21",
+        "2026-04-28",
+        "2026-05-05",
+        "2026-05-12",
+        "2026-05-19",
+        "2026-05-26"
       ],
       "exercises": [
         {

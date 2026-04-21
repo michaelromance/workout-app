@@ -275,6 +275,28 @@
     font-size: 12px; color: var(--text-muted);
     text-align: right; flex-shrink: 0; min-width: 70px;
   }
+  .ex-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-top: 2px;
+  }
+  .ex-status-badge.complete {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .ex-status-badge.partial {
+    background: var(--warn);
+    color: var(--bg);
+  }
+  .ex-status-badge.empty {
+    background: var(--panel-2);
+    color: var(--text-dim);
+  }
   .ex-head .ex-plan strong { color: var(--text); font-weight: 600; }
   .ex-cue {
     font-size: 12px; color: var(--text-muted);
@@ -388,46 +410,6 @@
     color: var(--text);
   }
 
-  /* ---------- Readiness ---------- */
-  .readiness-group {
-    margin-bottom: 14px;
-  }
-  .readiness-group .g-label {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-  .rating-row {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
-  }
-  .rating-row button {
-    padding: 10px 6px;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 11px;
-    color: var(--text-muted);
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-  }
-  .rating-row button .emj { font-size: 20px; }
-  .rating-row button.selected {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-  }
-  .rating-row button.selected .emj { filter: brightness(1.2); }
-
-  textarea.notes-box {
-    width: 100%;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px;
-    font-size: 14px;
-    min-height: 70px;
-    resize: vertical;
-    color: var(--text);
-  }
 
   /* ---------- Progress ---------- */
   .stat-grid {
@@ -552,22 +534,6 @@
     </div>
   </div>
 
-  <!-- Screen: Readiness -->
-  <div class="screen" id="screen-readiness">
-    <div class="card">
-      <div class="card-title">How you feeling today?</div>
-      <div class="muted" style="margin-bottom:14px;" id="readiness-session-hint">—</div>
-
-      <div id="readiness-groups"></div>
-
-      <div class="readiness-group">
-        <div class="g-label">Notes (optional)</div>
-        <textarea class="notes-box" id="readiness-notes" placeholder="Sleep quality, stress, anything weird?"></textarea>
-      </div>
-
-      <button class="btn-primary" id="btn-save-readiness">Save &amp; go to today's session</button>
-    </div>
-  </div>
 
   <!-- Screen: Progress -->
   <div class="screen" id="screen-progress">
@@ -607,7 +573,6 @@
   <div class="tabbar">
     <button data-tab="block" class="active"><span class="icon">▦</span><span>Block</span></button>
     <button data-tab="today"><span class="icon">▶</span><span>Today</span></button>
-    <button data-tab="readiness"><span class="icon">♨</span><span>Ready</span></button>
     <button data-tab="progress"><span class="icon">↗</span><span>Progress</span></button>
   </div>
 
@@ -622,7 +587,6 @@
 
 const LS = {
   logs: 'workout-app:logs',
-  readiness: 'workout-app:readiness',
   prefs: 'workout-app:prefs',
   ui: 'workout-app:ui',
 };
@@ -632,7 +596,6 @@ const state = {
   currentSessionId: null,   // "d1-w1"
   activeScreen: 'block',
   logs: {},                 // { sessionId: {date, dayId, week, exercises: [{name, sets:[{reps,weight,rpe,done}]}], finishedAt} }
-  readiness: {},            // { date: {legs,chest,back,shoulders,arms,notes} }
   prefs: { theme: 'auto' },
   restTimer: null,
   openExercises: new Set(), // names of open exercise cards, preserved across re-renders
@@ -641,11 +604,9 @@ const state = {
 /* ---------------- Storage helpers ---------------- */
 function loadStorage() {
   try { state.logs = JSON.parse(localStorage.getItem(LS.logs)) || {}; } catch(e) { state.logs = {}; }
-  try { state.readiness = JSON.parse(localStorage.getItem(LS.readiness)) || {}; } catch(e) { state.readiness = {}; }
   try { state.prefs = Object.assign({theme:'auto'}, JSON.parse(localStorage.getItem(LS.prefs)) || {}); } catch(e) { state.prefs = {theme:'auto'}; }
 }
 function saveLogs() { localStorage.setItem(LS.logs, JSON.stringify(state.logs)); }
-function saveReadiness() { localStorage.setItem(LS.readiness, JSON.stringify(state.readiness)); }
 function savePrefs() { localStorage.setItem(LS.prefs, JSON.stringify(state.prefs)); }
 
 /* ---------------- Theme ---------------- */
@@ -886,10 +847,22 @@ function renderToday() {
 
     const head = document.createElement('div');
     head.className = 'ex-head';
+    const setsInfo = setsDoneStr(ex);
+    const [doneCount, totalCount] = setsInfo.split('/').map(Number);
+    let statusBadge = '';
+    if (ex.type !== 'mobility') {
+      if (doneCount >= totalCount) {
+        statusBadge = `<span class="ex-status-badge complete">✓ Done</span>`;
+      } else if (doneCount > 0) {
+        statusBadge = `<span class="ex-status-badge partial">${setsInfo}</span>`;
+      } else {
+        statusBadge = `<span class="ex-status-badge empty">${setsInfo}</span>`;
+      }
+    }
     head.innerHTML = `
       <div class="ex-name">
         ${ex.name}
-        ${ex.type !== 'mobility' ? `<div class="muted" style="font-size:11px;margin-top:2px;">${setsDoneStr(ex)} sets done</div>` : ''}
+        ${ex.type !== 'mobility' ? `<div style="margin-top:3px;">${statusBadge}</div>` : ''}
       </div>
       <div class="ex-plan">${planLabel(ex, log)}</div>
     `;
@@ -1007,63 +980,6 @@ function tickRestTimer() {
   }
 }
 
-/* ---------------- Readiness ---------------- */
-const READINESS_GROUPS = [
-  { key: 'legs', label: 'Legs' },
-  { key: 'chest', label: 'Chest' },
-  { key: 'back', label: 'Back' },
-  { key: 'shoulders', label: 'Shoulders' },
-  { key: 'arms', label: 'Arms' },
-];
-const RATING_OPTIONS = [
-  { val: 1, emj: '😁', label: 'Fresh' },
-  { val: 2, emj: '🙂', label: 'Normal' },
-  { val: 3, emj: '😐', label: 'Tight' },
-  { val: 4, emj: '😣', label: 'Sore' },
-  { val: 5, emj: '🤕', label: 'Painful' },
-];
-
-function renderReadiness() {
-  const host = document.getElementById('readiness-groups');
-  host.innerHTML = '';
-  const today = todayISO();
-  const r = state.readiness[today] || { notes: '' };
-  const cur = computeCurrentSession();
-  document.getElementById('readiness-session-hint').textContent =
-    `Heading into: ${cur.label}${cur.exact ? ' (today)' : ' (next up)'}`;
-
-  for (const g of READINESS_GROUPS) {
-    const wrap = document.createElement('div');
-    wrap.className = 'readiness-group';
-    const label = document.createElement('div');
-    label.className = 'g-label';
-    label.textContent = g.label;
-    wrap.appendChild(label);
-    const row = document.createElement('div');
-    row.className = 'rating-row';
-    for (const opt of RATING_OPTIONS) {
-      const b = document.createElement('button');
-      const selected = r[g.key] === opt.val;
-      if (selected) b.className = 'selected';
-      b.innerHTML = `<span class="emj">${opt.emj}</span><span>${opt.label}</span>`;
-      b.addEventListener('click', () => {
-        r[g.key] = opt.val;
-        state.readiness[today] = r;
-        saveReadiness();
-        renderReadiness();
-      });
-      row.appendChild(b);
-    }
-    wrap.appendChild(row);
-    host.appendChild(wrap);
-  }
-  document.getElementById('readiness-notes').value = r.notes || '';
-  document.getElementById('readiness-notes').oninput = (e) => {
-    r.notes = e.target.value;
-    state.readiness[today] = r;
-    saveReadiness();
-  };
-}
 
 /* ---------------- Progress ---------------- */
 function computeStreak() {
@@ -1169,7 +1085,6 @@ function switchTab(name) {
   });
   if (name === 'block') renderBlock();
   if (name === 'today') renderToday();
-  if (name === 'readiness') renderReadiness();
   if (name === 'progress') renderProgress();
 }
 
@@ -1193,9 +1108,6 @@ function wireUp() {
     state.currentSessionId = null;
     switchTab('progress');
   });
-  document.getElementById('btn-save-readiness').addEventListener('click', () => {
-    switchTab('today');
-  });
   document.getElementById('rt-add').addEventListener('click', () => {
     if (state.restTimer) state.restTimer.endTs += 30000;
   });
@@ -1205,7 +1117,6 @@ function wireUp() {
     const data = {
       exportedAt: new Date().toISOString(),
       logs: state.logs,
-      readiness: state.readiness,
       prefs: state.prefs,
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1217,9 +1128,8 @@ function wireUp() {
     URL.revokeObjectURL(url);
   });
   document.getElementById('btn-reset').addEventListener('click', () => {
-    if (!confirm('Wipe all logs, readiness, and prefs? This cannot be undone.')) return;
+    if (!confirm('Wipe all logs and prefs? This cannot be undone.')) return;
     localStorage.removeItem(LS.logs);
-    localStorage.removeItem(LS.readiness);
     localStorage.removeItem(LS.prefs);
     location.reload();
   });
