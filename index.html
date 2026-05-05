@@ -1177,7 +1177,7 @@ button { cursor: pointer; }
     <div class="masthead">
       <div class="label" id="block-masthead-label">BLOCK I &middot; WEEK 1 OF 6</div>
       <h1>HYPERTROPHY / RECOMP</h1>
-      <div class="sub">U &middot; L &middot; U &middot; L &middot; 4 DAYS / WEEK</div>
+      <div class="sub" id="block-split-label">U &middot; L &middot; U &middot; 3 DAYS / WEEK</div>
     </div>
     <div class="progression-bar" id="progression-bar"></div>
     <div class="field-paper current-week-card" id="current-week-card"></div>
@@ -1217,7 +1217,7 @@ button { cursor: pointer; }
     </div>
     <div class="stat-cards">
       <div class="stat-card"><div class="sc-val" id="stat-streak">0</div><div class="sc-lbl">Streak</div></div>
-      <div class="stat-card"><div class="sc-val" id="stat-sessions">0 / 24</div><div class="sc-lbl">Complete</div></div>
+      <div class="stat-card"><div class="sc-val" id="stat-sessions">0 / 18</div><div class="sc-lbl">Complete</div></div>
       <div class="stat-card"><div class="sc-val" id="stat-volume">0</div><div class="sc-lbl">Total LB</div></div>
     </div>
 
@@ -1360,6 +1360,37 @@ function computeCurrentSession() {
 }
 
 function sessionId(dayId, week) { return `${dayId}-w${week}`; }
+
+/* Find next session that hasn't been completed yet, optionally after a given sessionId */
+function computeNextSession(afterSessionId) {
+  const allSlots = [];
+  for (let w = 1; w <= state.block.weeks; w++) {
+    for (const day of state.block.days) {
+      allSlots.push({ dayId: day.dayId, week: w, date: day.dateByWeek[w - 1], label: day.label, day });
+    }
+  }
+  allSlots.sort((a, b) => a.date.localeCompare(b.date));
+
+  // Find the index of the "after" session
+  let startIdx = 0;
+  if (afterSessionId) {
+    const idx = allSlots.findIndex(s => sessionId(s.dayId, s.week) === afterSessionId);
+    if (idx !== -1) startIdx = idx + 1;
+  }
+
+  // Look for the next incomplete session
+  for (let i = startIdx; i < allSlots.length; i++) {
+    const slot = allSlots[i];
+    const sid = sessionId(slot.dayId, slot.week);
+    const log = state.logs[sid];
+    const prog = log ? sessionProgress(log) : 'empty';
+    if (prog !== 'complete') return slot;
+  }
+
+  // If everything after is done, return the next slot chronologically anyway
+  if (startIdx < allSlots.length) return allSlots[startIdx];
+  return allSlots[allSlots.length - 1];
+}
 function phaseForWeek(week) {
   const p = state.block.phases.find(ph => ph.week === week);
   return p || state.block.phases[0];
@@ -1414,16 +1445,18 @@ function getOrInitSessionLog(dayId, week) {
 
 function sessionVolume(log) {
   let vol = 0;
+  if (!log || !log.exercises) return 0;
   for (const ex of log.exercises) {
     if (ex.type !== 'weighted') continue;
     for (const s of ex.sets) {
       if (!s.done) continue;
-      const reps = parseInt(s.reps) || 0;
-      const wt = parseFloat(s.weight) || 0;
+      const reps = parseInt(s.reps);
+      const wt = parseFloat(s.weight);
+      if (isNaN(reps) || isNaN(wt)) continue;
       vol += reps * wt;
     }
   }
-  return Math.round(vol);
+  return isNaN(vol) ? 0 : Math.round(vol);
 }
 
 function sessionProgress(log) {
@@ -1465,6 +1498,25 @@ function weightDetail(name, weight) {
 function weightShort(name, weight) {
   if (!weight) return '';
   return weight + ' lb';
+}
+
+/* ---------------- Last session lookup ---------------- */
+function getLastPerformance(exName, currentSessionId) {
+  const allLogs = Object.values(state.logs)
+    .filter(l => l.sessionId !== currentSessionId && l.finishedAt)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  for (const log of allLogs) {
+    for (const ex of log.exercises) {
+      if (ex.name !== exName) continue;
+      const doneSets = ex.sets.filter(s => s.done);
+      if (doneSets.length === 0) continue;
+      const maxW = Math.max(...doneSets.map(s => parseFloat(s.weight) || 0));
+      const repRange = doneSets.map(s => parseInt(s.reps) || 0).filter(r => r > 0);
+      const avgReps = repRange.length > 0 ? Math.round(repRange.reduce((a,b)=>a+b,0)/repRange.length) : 0;
+      return { weight: maxW, reps: avgReps, sets: doneSets.length, date: log.date };
+    }
+  }
+  return null;
 }
 
 /* ---------------- Muscle map ---------------- */
@@ -1591,6 +1643,14 @@ function renderBlock() {
   // Masthead
   document.getElementById('block-masthead-label').textContent = `BLOCK I \u00b7 WEEK ${curWeek} OF ${state.block.weeks}`;
 
+  // Update split label dynamically
+  const splitLabel = document.getElementById('block-split-label');
+  if (splitLabel) {
+    const dayCount = state.block.days.length;
+    const types = state.block.days.map(d => d.label.split(' ').slice(1).join(' ').charAt(0).toUpperCase()).join(' \u00b7 ');
+    splitLabel.textContent = `${types} \u00b7 ${dayCount} DAYS / WEEK`;
+  }
+
   // Progression bar
   const progBar = document.getElementById('progression-bar');
   const rpeByWeek = [6, 6, 7.5, 8, 8.5, 6.5];
@@ -1646,7 +1706,12 @@ function renderBlock() {
     let cls = '';
     if (isToday) { statusText = 'TODAY'; cls = 'is-today'; }
     else if (prog === 'complete') { statusText = 'DONE'; cls = 'is-done'; }
-    else if (prog === 'partial') { statusText = 'PARTIAL'; cls = ''; }
+    else if (prog === 'partial') {
+      const workEx = log.exercises.filter(e => e.type !== 'mobility');
+      const doneEx = workEx.filter(e => e.sets.every(s => s.done)).length;
+      statusText = `${doneEx}/${workEx.length}`;
+      cls = '';
+    }
 
     cwHtml += `<div class="day-btn ${cls}" data-dayid="${day.dayId}" data-week="${curWeek}">
       <div class="db-left">
@@ -1670,9 +1735,9 @@ function renderBlock() {
   let tHtml = '<table class="block-grid-table"><thead><tr><th></th>';
   for (let w = 1; w <= state.block.weeks; w++) tHtml += `<th>W${w}</th>`;
   tHtml += '</tr></thead><tbody>';
-  const dayLabels = ['MON','TUE','THU','SAT'];
   state.block.days.forEach((day, di) => {
-    tHtml += `<tr><td class="row-label">${dayLabels[di] || day.label.slice(0,3).toUpperCase()}</td>`;
+    const dayLabel = day.label.split(' ')[0].toUpperCase().slice(0,3);
+    tHtml += `<tr><td class="row-label">${dayLabel}</td>`;
     for (let w = 1; w <= state.block.weeks; w++) {
       const d = day.dateByWeek[w - 1];
       const sid = sessionId(day.dayId, w);
@@ -1823,6 +1888,8 @@ function renderToday() {
       </div>
     `;
 
+    if (isCurrent) row.id = 'current-exercise-row';
+
     row.addEventListener('click', () => {
       state.focusExIndex = exIdx;
       showScreen('focus');
@@ -1830,6 +1897,12 @@ function renderToday() {
     });
 
     host.appendChild(row);
+  });
+
+  // Auto-scroll to current exercise
+  requestAnimationFrame(() => {
+    const cur = document.getElementById('current-exercise-row');
+    if (cur) cur.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 }
 
@@ -1850,7 +1923,10 @@ function renderFocus() {
   // Top bar
   html += `<div class="focus-top">
     <button class="focus-back" id="focus-back-btn">\u2190 BACK</button>
-    <div class="focus-counter">${String(workIdx + 1).padStart(2,'0')} / ${String(totalWork).padStart(2,'0')}</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      ${workIdx > 0 ? '<button class="focus-back" id="focus-prev-btn">\u2190 PREV</button>' : ''}
+      <div class="focus-counter">${String(workIdx + 1).padStart(2,'0')} / ${String(totalWork).padStart(2,'0')}</div>
+    </div>
   </div>`;
 
   // Progress segments
@@ -1881,6 +1957,15 @@ function renderFocus() {
   // Cue
   if (ex.cue) {
     html += `<div class="focus-cue">${ex.cue}</div>`;
+  }
+
+  // Last session reference
+  const lastPerf = getLastPerformance(ex.name, state.currentSessionId);
+  if (lastPerf && (lastPerf.weight > 0 || lastPerf.reps > 0)) {
+    const lastInfo = lastPerf.weight > 0
+      ? `${lastPerf.weight} lb × ${lastPerf.reps} (${lastPerf.sets}s)`
+      : `${lastPerf.reps} reps (${lastPerf.sets}s)`;
+    html += `<div style="font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:1px;margin-bottom:12px;padding:6px 8px;background:rgba(20,24,26,0.04);">LAST: ${lastInfo} · ${fmtDate(lastPerf.date)}</div>`;
   }
 
   // Set grid header
@@ -1927,6 +2012,18 @@ function renderFocus() {
     showScreen('today');
     renderToday();
   });
+
+  // Previous exercise button
+  const prevBtn = document.getElementById('focus-prev-btn');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (workIdx > 0) {
+        const prevEx = workExercises[workIdx - 1];
+        state.focusExIndex = log.exercises.indexOf(prevEx);
+        renderFocus();
+      }
+    });
+  }
 
   // Set inputs
   inner.querySelectorAll('.set-row').forEach(row => {
@@ -2025,8 +2122,10 @@ function renderRecap() {
     for (const s of ex.sets) {
       if (!s.done) continue;
       totalSets++;
-      totalReps += parseInt(s.reps) || 0;
-      if (s.rpe) { rpeSum += s.rpe; rpeCount++; }
+      const r = parseInt(s.reps);
+      if (!isNaN(r)) totalReps += r;
+      const rpe = parseFloat(s.rpe);
+      if (!isNaN(rpe) && rpe > 0) { rpeSum += rpe; rpeCount++; }
     }
   }
   const avgRpe = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : '\u2014';
@@ -2070,9 +2169,19 @@ function renderRecap() {
       .filter(Boolean)
   )];
 
-  // Next session
-  const cur = computeCurrentSession();
-  const nextLabel = cur.label || 'Next session';
+  // Next session — find the next INCOMPLETE session after this one
+  const nextSession = computeNextSession(state.currentSessionId);
+  const nextLabel = nextSession.label || 'Next session';
+
+  // Compute session duration
+  let durationHtml = '';
+  if (log.startedAt && log.finishedAt) {
+    const durMs = new Date(log.finishedAt) - new Date(log.startedAt);
+    const durMin = Math.round(durMs / 60000);
+    if (durMin > 0 && durMin < 300) {
+      durationHtml = `<div class="recap-hero-cmp">${durMin} min</div>`;
+    }
+  }
 
   let html = `
     <div class="recap-top">
@@ -2082,6 +2191,7 @@ function renderRecap() {
     <div class="recap-hero-vol">${vol.toLocaleString()}</div>
     <div class="recap-hero-lbl">POUNDS MOVED</div>
     ${volCmpHtml}
+    ${durationHtml}
     <div style="height:20px;"></div>
     <div class="field-paper" style="padding:0;">
       <div class="recap-stats">
@@ -2113,8 +2223,8 @@ function renderRecap() {
     switchTab('progress');
   });
   document.getElementById('recap-next-btn').addEventListener('click', () => {
+    const next = computeNextSession(state.currentSessionId);
     state.currentSessionId = null;
-    const next = computeCurrentSession();
     openSession(next.dayId, next.week);
   });
 }
@@ -2130,7 +2240,8 @@ function renderProgress() {
 
   const completedCount = logs.filter(l => sessionProgress(l) === 'complete').length;
   document.getElementById('stat-streak').textContent = computeStreak();
-  document.getElementById('stat-sessions').textContent = `${completedCount} / 24`;
+  const totalSessions = state.block.weeks * state.block.days.length;
+  document.getElementById('stat-sessions').textContent = `${completedCount} / ${totalSessions}`;
   document.getElementById('stat-volume').textContent = totalVol.toLocaleString();
 
   // Muscle heatmap
@@ -2321,6 +2432,12 @@ function wireUp() {
   document.getElementById('btn-finish-session').addEventListener('click', () => {
     const log = state.logs[state.currentSessionId];
     if (!log) return;
+    const prog = sessionProgress(log);
+    if (prog !== 'complete') {
+      const workEx = log.exercises.filter(e => e.type !== 'mobility');
+      const doneEx = workEx.filter(e => e.sets.every(s => s.done)).length;
+      if (!confirm(`${doneEx}/${workEx.length} exercises complete. Finish anyway?`)) return;
+    }
     log.finishedAt = new Date().toISOString();
     saveLogs();
     showScreen('recap');
