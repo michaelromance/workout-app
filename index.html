@@ -931,13 +931,23 @@ function renderSession() {
     exLog.sets.forEach((s, si) => {
       const rpeOver = s.rpe && s.rpe > cap;
       const rpeWarn = s.rpe && s.rpe >= cap;
-      bodyHtml += `<div class="set-row ${s.done?'done':''} ${hasWeight?'with-weight':'no-weight'}" data-ex="${i}" data-set="${si}">
-        <div class="sno">${si+1}</div>
-        ${hasWeight?`<input type="number" inputmode="decimal" value="${s.weight??''}" data-field="weight" placeholder="${sug?.weight||'lb'}">`:''}
-        <input type="number" inputmode="numeric" value="${typeof s.reps==='number'?s.reps:''" data-field="reps" placeholder="${ex.repRange?ex.repRange[0]+'-'+ex.repRange[1]:'reps'}">
-        <input type="number" inputmode="numeric" value="${s.rpe??''}" data-field="rpe" placeholder="—" class="${rpeOver?'rpe-over':rpeWarn?'rpe-warn':''}">
-        <button class="check" data-act="toggle">${s.done?'✓':''}</button>
-      </div>`;
+      const wVal = s.weight != null ? s.weight : '';
+      const rpeVal = s.rpe != null ? s.rpe : '';
+      const repsVal = typeof s.reps === 'number' ? s.reps : '';
+      const repsPlc = ex.repRange ? ex.repRange[0] + '-' + ex.repRange[1] : 'reps';
+      const wPlc = sug && sug.weight ? sug.weight : 'lb';
+      const rpeCls = rpeOver ? 'rpe-over' : rpeWarn ? 'rpe-warn' : '';
+      let weightCell = '';
+      if (hasWeight) {
+        weightCell = '<input type="number" inputmode="decimal" value="' + wVal + '" data-field="weight" placeholder="' + wPlc + '">';
+      }
+      bodyHtml += '<div class="set-row ' + (s.done ? 'done' : '') + ' ' + (hasWeight ? 'with-weight' : 'no-weight') + '" data-ex="' + i + '" data-set="' + si + '">'
+        + '<div class="sno">' + (si+1) + '</div>'
+        + weightCell
+        + '<input type="number" inputmode="numeric" value="' + repsVal + '" data-field="reps" placeholder="' + repsPlc + '">'
+        + '<input type="number" inputmode="numeric" value="' + rpeVal + '" data-field="rpe" placeholder="—" class="' + rpeCls + '">'
+        + '<button class="check" data-act="toggle">' + (s.done ? '✓' : '') + '</button>'
+        + '</div>';
     });
     // RPE warning
     const hasRpeOver = exLog.sets.some(s => s.done && s.rpe > cap);
@@ -1088,13 +1098,23 @@ function renderFocus() {
   exLog.sets.forEach((s, si) => {
     const rpeOver = s.rpe && s.rpe > cap;
     const rpeWarn = s.rpe && s.rpe >= cap;
-    html += `<div class="set-row ${s.done?'done':''} ${hasWeight?'with-weight':'no-weight'}" data-sidx="${si}">
-      <div class="sno">${si+1}</div>
-      ${hasWeight?`<input type="number" inputmode="decimal" value="${s.weight??''}" data-field="weight" placeholder="${sug?.weight||'lb'}">`:''}
-      <input type="number" inputmode="numeric" value="${typeof s.reps==='number'?s.reps:''" data-field="reps" placeholder="${ex.repRange?ex.repRange[0]+'-'+ex.repRange[1]:'reps'}">
-      <input type="number" inputmode="numeric" value="${s.rpe??''}" data-field="rpe" placeholder="—" class="${rpeOver?'rpe-over':rpeWarn?'rpe-warn':''}">
-      <button class="check" data-act="toggle">${s.done?'✓':''}</button>
-    </div>`;
+    const wVal = s.weight != null ? s.weight : '';
+    const rpeVal = s.rpe != null ? s.rpe : '';
+    const repsVal = typeof s.reps === 'number' ? s.reps : '';
+    const repsPlc = ex.repRange ? ex.repRange[0] + '-' + ex.repRange[1] : 'reps';
+    const wPlc = sug && sug.weight ? sug.weight : 'lb';
+    const rpeCls = rpeOver ? 'rpe-over' : rpeWarn ? 'rpe-warn' : '';
+    let weightCell = '';
+    if (hasWeight) {
+      weightCell = '<input type="number" inputmode="decimal" value="' + wVal + '" data-field="weight" placeholder="' + wPlc + '">';
+    }
+    html += '<div class="set-row ' + (s.done ? 'done' : '') + ' ' + (hasWeight ? 'with-weight' : 'no-weight') + '" data-sidx="' + si + '">'
+      + '<div class="sno">' + (si+1) + '</div>'
+      + weightCell
+      + '<input type="number" inputmode="numeric" value="' + repsVal + '" data-field="reps" placeholder="' + repsPlc + '">'
+      + '<input type="number" inputmode="numeric" value="' + rpeVal + '" data-field="rpe" placeholder="—" class="' + rpeCls + '">'
+      + '<button class="check" data-act="toggle">' + (s.done ? '✓' : '') + '</button>'
+      + '</div>';
   });
 
   // RPE warning
