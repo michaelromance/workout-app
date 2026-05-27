@@ -1,5 +1,5 @@
 /* Workout PWA — service worker. Cache-first for shell assets. */
-const CACHE_VERSION = 'workout-b2-v1-2026-05-22';
+const CACHE_VERSION = 'workout-b2-v2-2026-05-27';
 const SHELL = [
   './',
   './index.html',

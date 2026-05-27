@@ -1793,7 +1793,7 @@ function init() {
   wireUp();
   renderHome();
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW failed', e));
+    navigator.serviceWorker.register('sw.js?v=2').catch(e => console.warn('SW failed', e));
   }
 }
 
